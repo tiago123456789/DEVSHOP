@@ -1,0 +1,12 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type CategoryDto {
+  id: String
+  name: String
+}
+
+type Query {
+  getCategories: [CategoryDto!]!
+}

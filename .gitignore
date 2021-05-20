@@ -6,6 +6,6 @@ frontend-backoffice/.next/
 frontend-backoffice/node_modules/
 frontend-backoffice/.env
 
-devshop-api/dist/
-devshop-api/node_modules/
-devshop-api/.env
+backend/dist/
+backend/node_modules/
+backend/.env
