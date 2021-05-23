@@ -5,8 +5,27 @@
 type CategoryDto {
   id: String
   name: String
+  slug: String
 }
 
 type Query {
   getCategories: [CategoryDto!]!
+  getCategoryById(id: String!): CategoryDto!
+}
+
+type Mutation {
+  updateCategory(input: UpdateCategoryInputDto!): Boolean!
+  createCategory(input: CategoryInputDto!): CategoryDto!
+  deleteCategory(id: String!): Boolean!
+}
+
+input UpdateCategoryInputDto {
+  id: String
+  name: String
+  slug: String
+}
+
+input CategoryInputDto {
+  name: String
+  slug: String
 }
