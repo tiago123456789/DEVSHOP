@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Dashboard from "../../components/Layout/Dashboard";
-import useSWR from "swr";
-import axios from "axios";
 import CategoryService from "../../services/CategoryService";
+import { useRouter } from "next/router";
 
 export default () => {
+  const router = useRouter();
   const [categories, setCategories] = useState([]);
   useEffect(() => {
     const loadCategories = async () => {
@@ -16,7 +16,6 @@ export default () => {
   }, [])
 
   const remove = async (category) => {
-    console.log(category);
     await new CategoryService().remove(category.id); 
     const registers = categories.filter(item => item.id != category.id);
     setCategories(registers);
@@ -46,6 +45,10 @@ export default () => {
                         <td className="border-grey-light border hover:bg-gray-100 p-3 text-red-400 hover:text-red-600 hover:font-medium cursor-pointer"
                         onClick={() => remove(category)}
                         >Delete
+                        </td>
+                        <td className="border-grey-light border hover:bg-gray-100 p-3 text-red-400 hover:text-red-600 hover:font-medium cursor-pointer"
+                        onClick={() => router.push("/categories/edit/" + category.id)}
+                        >Editar
                         </td>
                       </tr>
                     )
