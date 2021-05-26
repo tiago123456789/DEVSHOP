@@ -7,11 +7,13 @@ import { CategoryModule } from './category/category.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { config } from 'process';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     CategoryModule,
+    ProductModule,
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
@@ -32,16 +34,6 @@ import { config } from 'process';
         };
       }
     })
-    // TypeOrmModule.forRoot({
-    //   type: "postgres",
-    //   host: 'localhost',
-    //   port: 5432,
-    //   username: 'postgres',
-    //   password: 'postgres',
-    //   database: 'devshop',
-    //   autoLoadEntities: true,
-    //   synchronize: true,
-    // })
   ],
   controllers: [AppController],
   providers: [AppService],
