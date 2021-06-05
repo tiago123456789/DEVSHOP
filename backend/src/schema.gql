@@ -8,15 +8,27 @@ type CategoryDto {
   slug: String
 }
 
+type Product {
+  id: String
+  name: String
+  description: String
+  slug: String
+}
+
 type Query {
   getCategories: [CategoryDto!]!
   getCategoryById(id: String!): CategoryDto!
+  getProducts: [Product!]!
+  getByIdProduct(id: String!): Product!
 }
 
 type Mutation {
   updateCategory(input: UpdateCategoryInputDto!): Boolean!
   createCategory(input: CategoryInputDto!): CategoryDto!
   deleteCategory(id: String!): Boolean!
+  createProduct(input: ProductInputDto!): Boolean!
+  updateProduct(input: UpdateProductInputDto!): Boolean!
+  deleteProduct(id: String!): Boolean!
 }
 
 input UpdateCategoryInputDto {
@@ -27,5 +39,19 @@ input UpdateCategoryInputDto {
 
 input CategoryInputDto {
   name: String
+  slug: String
+}
+
+input ProductInputDto {
+  id: String
+  name: String
+  description: String
+  slug: String
+}
+
+input UpdateProductInputDto {
+  id: String
+  name: String
+  description: String
   slug: String
 }
