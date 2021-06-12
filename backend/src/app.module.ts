@@ -8,14 +8,40 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { config } from 'process';
 import { ProductModule } from './product/product.module';
+import { CommomModule } from './commom/commom.module';
+import { GraphQLError, GraphQLFormattedError } from 'graphql';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     CategoryModule,
     ProductModule,
+    CommomModule,
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      formatError: (error: GraphQLError) => {
+        switch(error.extensions.exception.name) {
+          case "DataInvalidException":
+            return {
+              message: error.extensions.exception.response || error.message,
+              // @ts-ignore
+              statusCode: error.extensions.exception.statusCode || 500,
+            };
+          default:
+            if (error.extensions.exception.status == 400) {
+              return {
+                message: error.extensions.exception.response.message,
+                // @ts-ignore
+                statusCode: 400
+              };
+            }
+            return {
+              message: "Internal server error",
+              // @ts-ignore
+              statusCode: error.extensions.exception.statusCode || 500,
+            };
+        }
+      },
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

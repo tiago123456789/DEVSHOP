@@ -1,28 +1,32 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Dashboard from "../../components/Layout/Dashboard";
 import CategoryService from "../../services/CategoryService";
-import App from "../../constants/App";
 import { useFormik } from "formik";
 import slugify from "slugify";
 import { useRouter } from "next/router";
+import ProductService from "../../services/ProductService";
+import App from "../../constants/App";
+
+const productService = new ProductService();
 
 export default () => {
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
       name: '',
-      slug: ''
+      slug: '',
+      description: ''
     },
     onSubmit: async values => {
       values.slug = slugify(values.name);
-      await new CategoryService().create(values);
-      router.push(App.ROUTES.CATEGORY);
+      await productService.create(values);
+      router.push(App.ROUTES.PRODUCT);
     },
   });
 
   return (
     <>
-      <Dashboard title="Criar categoria">
+      <Dashboard title="Criar produto">
         <>
           {/* component */}
           <div className="container">
@@ -51,6 +55,16 @@ export default () => {
                     border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 
                     dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 
                     focus:outline-none focus:ring" />
+                  </div>
+                  <div>
+                    <label className="text-gray-700 dark:text-gray-200" htmlFor="username">Description</label>
+                    <textarea id="username" name="description"
+                    onChange={formik.handleChange}
+                    value={formik.values.description}
+                    className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white
+                     border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300
+                      dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500
+                       focus:outline-none focus:ring" ></textarea>
                   </div>
                 </div>
                 <div className="flex justify-end mt-6">

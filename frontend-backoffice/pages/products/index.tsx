@@ -1,59 +1,62 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Dashboard from "../../components/Layout/Dashboard";
-import CategoryService from "../../services/CategoryService";
+import ProductService from "../../services/ProductService";
 import { useRouter } from "next/router";
-import Link from "next/link";
-import App from "../../constants/App";
 import Button from "../../components/Button";
+import App from "../../constants/App";
+
+const productService = new ProductService();
 
 export default () => {
   const router = useRouter();
-  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+
   useEffect(() => {
-    const loadCategories = async () => {
-      const categories = await new CategoryService().getAll();
-      setCategories(categories);
+    const loadProducts = async () => {
+      const products = await productService.getAll();
+      setProducts(products);
     }
 
-    loadCategories();
+    loadProducts();
   }, [])
 
-  const remove = async (category) => {
-    await new CategoryService().remove(category.id);
-    const registers = categories.filter(item => item.id != category.id);
-    setCategories(registers);
+  const remove = async (product) => {
+    await productService.remove(product.id); 
+    const registers = products.filter(item => item.id != product.id);
+    setProducts(registers);
   }
 
 
   return (
     <>
-      <Dashboard title="Categorias">
+      <Dashboard title="Produtos">
         <>
           <div className="container">
-
-            <Button route={App.ROUTES.NEW_CATEGORY} title="New" />
+            <Button route={App.ROUTES.NEW_PRODUCT} title="New" />
 
             <table className="w-full flex flex-row flex-no-wrap sm:bg-white rounded-lg overflow-hidden sm:shadow-lg my-5">
               <thead className="">
                 <tr className="flex flex-col flex-no wrap sm:table-row rounded-l-lg sm:rounded-none mb-2 sm:mb-0">
                   <th className="p-3 text-left">Id</th>
                   <th className="p-3 text-left">Name</th>
+                  <th className="p-3 text-left">Description</th>
                   <th className="p-3 text-left" width="110px">Actions</th>
                 </tr>
               </thead>
               <tbody className="flex-1 sm:flex-none">
-                {
-                  (categories || []).map(category => {
+                { 
+                  (products || []).map(item => {
                     return (
-                      <tr key={category.id} className="flex flex-col flex-no wrap sm:table-row mb-2 sm:mb-0">
-                        <td className="border-grey-light border hover:bg-gray-100 p-3">{category.id}</td>
-                        <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">{category.name}</td>
+                      <tr key={item.id} className="flex flex-col flex-no wrap sm:table-row mb-2 sm:mb-0">
+                        <td className="border-grey-light border hover:bg-gray-100 p-3">{item.id}</td>
+                        <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">{item.name}</td>
+                        <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">{item.description}</td>
                         <td className="border-grey-light border hover:bg-gray-100 p-3 text-red-400 hover:text-red-600 hover:font-medium cursor-pointer"
-                          onClick={() => remove(category)}
+                        onClick={() => remove(item)}
                         >Delete
                         </td>
                         <td className="border-grey-light border hover:bg-gray-100 p-3 text-red-400 hover:text-red-600 hover:font-medium cursor-pointer"
-                          onClick={() => router.push("/categories/edit/" + category.id)}
+                        onClick={() => router.push("/products/edit/" + item.id)}
                         >Editar
                         </td>
                       </tr>
