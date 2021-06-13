@@ -5,6 +5,8 @@ import slugify from "slugify";
 import { useRouter } from "next/router";
 import ProductService from "../../../services/ProductService";
 import App from "../../../constants/App";
+import ProductValidation from "../../../validations/ProductValidation";
+import ErrorValidation from "../../../components/ErrorValidation";
 
 const productService = new ProductService();
 
@@ -13,6 +15,7 @@ export default ({ id }) => {
     const router = useRouter();
     const formik = useFormik({
         initialValues: product,
+        validationSchema: ProductValidation,
         enableReinitialize: true,
         onSubmit: async values => {
             // @ts-ignore
@@ -50,6 +53,7 @@ export default ({ id }) => {
                      border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300
                       dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500
                        focus:outline-none focus:ring" />
+                       <ErrorValidation value={formik.errors["name"]} />
                                     </div>
                                     <div>
                                         <label className="text- ray-700 dark:text-gray-200" htmlFor="emailAddress">Slug</label>
@@ -63,6 +67,8 @@ export default ({ id }) => {
                     border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 
                     dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 
                     focus:outline-none focus:ring" />
+                                           <ErrorValidation value={formik.errors["slug"]} />
+
                                     </div>
                                 </div>
                                 <div>
@@ -74,6 +80,8 @@ export default ({ id }) => {
                                     border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300
                                     dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500
                                     focus:outline-none focus:ring" ></textarea>
+                                <ErrorValidation value={formik.errors["description"]} />
+
                                 </div>
                                 <div className="flex justify-end mt-6">
                                     <button className="px-6 py-2 leading-5 text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover:bg-gray-600 focus:outline-none focus:bg-gray-600">Save</button>

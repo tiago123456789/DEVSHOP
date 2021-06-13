@@ -6,6 +6,8 @@ import slugify from "slugify";
 import { useRouter } from "next/router";
 import ProductService from "../../services/ProductService";
 import App from "../../constants/App";
+import ProductValidation from "../../validations/ProductValidation";
+import ErrorValidation from "../../components/ErrorValidation";
 
 const productService = new ProductService();
 
@@ -17,6 +19,7 @@ export default () => {
       slug: '',
       description: ''
     },
+    validationSchema: ProductValidation,
     onSubmit: async values => {
       values.slug = slugify(values.name);
       await productService.create(values);
@@ -42,6 +45,7 @@ export default () => {
                      border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300
                       dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500
                        focus:outline-none focus:ring" />
+                       <ErrorValidation value={formik.errors["name"]} />
                   </div>
                   <div>
                     <label className="text- ray-700 dark:text-gray-200" htmlFor="emailAddress">Slug</label>
@@ -55,6 +59,7 @@ export default () => {
                     border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 
                     dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 
                     focus:outline-none focus:ring" />
+                      <ErrorValidation value={formik.errors["slug"]} />
                   </div>
                   <div>
                     <label className="text-gray-700 dark:text-gray-200" htmlFor="username">Description</label>
@@ -65,6 +70,8 @@ export default () => {
                      border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300
                       dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500
                        focus:outline-none focus:ring" ></textarea>
+                    <ErrorValidation value={formik.errors["description"]} />
+
                   </div>
                 </div>
                 <div className="flex justify-end mt-6">
