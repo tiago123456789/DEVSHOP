@@ -4,12 +4,15 @@ import { useFormik } from "formik";
 import slugify from "slugify";
 import { useRouter } from "next/router";
 import CategoryService from "../../../services/CategoryService";
+import CategoryValidation from "../../../validations/CategoryValidation";
+import ErrorValidation from "../../../components/ErrorValidation";
 
 export default ({ id }) => {
     const [category, setCategory] = useState({});
     const router = useRouter();
     const formik = useFormik({
         initialValues: category,
+        validationSchema: CategoryValidation,
         enableReinitialize: true,
         onSubmit: async values => {
             // @ts-ignore
@@ -47,6 +50,8 @@ export default ({ id }) => {
                      border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300
                       dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500
                        focus:outline-none focus:ring" />
+                                           <ErrorValidation value={formik.errors["name"]}/>
+
                                     </div>
                                     <div>
                                         <label className="text- ray-700 dark:text-gray-200" htmlFor="emailAddress">Slug</label>
@@ -60,6 +65,8 @@ export default ({ id }) => {
                     border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 
                     dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 
                     focus:outline-none focus:ring" />
+                                        <ErrorValidation value={formik.errors["slug"]}/>
+
                                     </div>
                                 </div>
                                 <div className="flex justify-end mt-6">
