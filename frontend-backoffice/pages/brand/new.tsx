@@ -6,33 +6,44 @@ import App from "../../constants/App";
 import { useFormik } from "formik";
 import slugify from "slugify";
 import { useRouter } from "next/router";
-import CategoryValidation from "../../validations/CategoryValidation";
+import BrandValidation from "../../validations/BrandValidation";
+import BrandService from "../../services/BrandService";
+import { FileUtil } from "../../utils/file-util";
+
+const brandService = new BrandService();
 
 export default () => {
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
       name: '',
-      slug: ''
     },
-    validationSchema: CategoryValidation,
+    validationSchema: BrandValidation,
     onSubmit: async values => {
-      values.slug = slugify(values.name);
-      await new CategoryService().create(values);
-      router.push(App.ROUTES.CATEGORY);
+      const brandId = await brandService.create(values);
+      // @ts-ignore
+      values.file = await FileUtil.parseToBase64Url(values.file);
+      // @ts-ignore
+      await brandService.updateLogoBrand(brandId, values.file);
+      router.push(App.ROUTES.BRAND);
     },
   });
 
+  const handlerFile = (event) => {
+    const file = event.target.files[0];
+    formik.setFieldValue('file', file)
+  }
+
   return (
     <>
-      <Dashboard title="Criar categoria">
+      <Dashboard title="Criar brand">
         <>
           {/* component */}
           <div className="container">
 
             <section className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
               <form onSubmit={formik.handleSubmit}>
-                <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
+                <div className="grid">
                   <div>
                     <label className="text-gray-700 dark:text-gray-200" htmlFor="username">Name</label>
                     <input id="username" type="text" name="name"
@@ -44,19 +55,17 @@ export default () => {
                        focus:outline-none focus:ring" />
                     <ErrorValidation value={formik.errors["name"]}/>
                   </div>
+                </div>
+                <div className="grid">
                   <div>
-                    <label className="text- ray-700 dark:text-gray-200" htmlFor="emailAddress">Slug</label>
-                    <input id="emailAddress"
-                      onChange={formik.handleChange}
-                      value={slugify(formik.values.name)}
-                      name="slug"
-                      type="text" 
-                      readOnly={true} 
-                    className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white 
-                    border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 
-                    dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 
-                    focus:outline-none focus:ring" />
-                    <ErrorValidation value={formik.errors["slug"]}/>
+                    <label className="text-gray-700 dark:text-gray-200" htmlFor="username">Logo</label>
+                    <input id="username" type="file" name="file"
+                    onChange={handlerFile}
+                    className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white
+                     border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300
+                      dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500
+                       focus:outline-none focus:ring" />
+                    {/* <ErrorValidation value={formik.errors["i"]}/> */}
                   </div>
                 </div>
                 <div className="flex justify-end mt-6">

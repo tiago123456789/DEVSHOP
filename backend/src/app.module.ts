@@ -10,6 +10,7 @@ import { config } from 'process';
 import { ProductModule } from './product/product.module';
 import { CommomModule } from './commom/commom.module';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
+import { BrandModule } from './brand/brand.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { GraphQLError, GraphQLFormattedError } from 'graphql';
                 statusCode: 400
               };
             }
+            console.log(error.extensions.exception);
             return {
               message: "Internal server error",
               // @ts-ignore
@@ -59,7 +61,8 @@ import { GraphQLError, GraphQLFormattedError } from 'graphql';
           logging: configService.get("ENV") == "dev" ? true : false
         };
       }
-    })
+    }),
+    BrandModule
   ],
   controllers: [AppController],
   providers: [AppService],

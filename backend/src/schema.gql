@@ -15,11 +15,19 @@ type Product {
   slug: String
 }
 
+type BrandDto {
+  id: String
+  name: String
+  image: String
+}
+
 type Query {
   getCategories: [CategoryDto!]!
   getCategoryById(id: String!): CategoryDto!
   getProducts: [Product!]!
   getByIdProduct(id: String!): Product!
+  getBrands: [BrandDto!]!
+  getBrandById(id: String!): BrandDto!
 }
 
 type Mutation {
@@ -29,6 +37,10 @@ type Mutation {
   createProduct(input: ProductInputDto!): Boolean!
   updateProduct(input: UpdateProductInputDto!): Boolean!
   deleteProduct(id: String!): Boolean!
+  updateLogoBrand(file: String!, id: String!): Boolean!
+  updateBrand(input: BrandInputDto!): Boolean!
+  createBrand(input: BrandInputDto!): String!
+  deleteBrand(id: String!): Boolean!
 }
 
 input UpdateCategoryInputDto {
@@ -54,4 +66,10 @@ input UpdateProductInputDto {
   name: String
   description: String
   slug: String
+}
+
+input BrandInputDto {
+  id: String
+  name: String
+  image: String
 }
