@@ -4,7 +4,6 @@ import { Repository } from "typeorm";
 import { BrandDto } from "./dto/brand.dto";
 import { Brand } from "./brand.entity";
 import { StorageInterface } from "src/commom/storage/storage.interface";
-import * as fs from "fs";
 
 @Injectable()
 export class BrandService {
@@ -16,6 +15,10 @@ export class BrandService {
     }
 
     async uploadLogoBrand(id: string, filename: string, fileContent: string) {
+        const register: Brand = await this.getById(id);
+        if (register && register.image) {
+            await this.s3Storage.remove(register.image);
+        }
         const location = await this.s3Storage.upload({
             filename: filename,
             fileContent: fileContent,
@@ -42,8 +45,10 @@ export class BrandService {
         });
     }
 
-    remove(id: string) {
-        return this.repository.delete(id);
+    async remove(id: string) {
+        const register: Brand = await this.getById(id);
+        await this.repository.delete(id);
+        return this.s3Storage.remove(register.image)
     }
 
     update(id: string, dataModified: { [key: string]: any }) {

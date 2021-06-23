@@ -11,6 +11,7 @@ import { ProductModule } from './product/product.module';
 import { CommomModule } from './commom/commom.module';
 import { GraphQLError, GraphQLFormattedError } from 'graphql';
 import { BrandModule } from './brand/brand.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -62,7 +63,8 @@ import { BrandModule } from './brand/brand.module';
         };
       }
     }),
-    BrandModule
+    BrandModule,
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService],

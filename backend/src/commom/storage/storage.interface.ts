@@ -10,4 +10,6 @@ export interface FileUpload {
 export interface StorageInterface {
 
     upload(fileUpload: FileUpload): Promise<any>
+
+    remove(linkImageS3: String): Promise<any>
 }   

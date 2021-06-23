@@ -39,7 +39,7 @@ export default () => {
             <table className="w-full flex flex-row flex-no-wrap sm:bg-white rounded-lg overflow-hidden sm:shadow-lg my-5">
               <thead className="">
                 <tr className="flex flex-col flex-no wrap sm:table-row rounded-l-lg sm:rounded-none mb-2 sm:mb-0">
-                  <th className="p-3 text-left">Id</th>
+                  <th  className="p-3 text-left">Imagem</th>
                   <th className="p-3 text-left">Name</th>
                   <th className="p-3 text-left" width="110px">Actions</th>
                 </tr>
@@ -49,7 +49,9 @@ export default () => {
                   (brands || []).map(item => {
                     return (
                       <tr key={item.id} className="flex flex-col flex-no wrap sm:table-row mb-2 sm:mb-0">
-                        <td className="border-grey-light border hover:bg-gray-100 p-3">{item.id}</td>
+                        <td className="border-grey-light border hover:bg-gray-100 p-3">
+                          <img src={item.image} width="100px" height="100px" />
+                        </td>
                         <td className="border-grey-light border hover:bg-gray-100 p-3 truncate">{item.name}</td>
                         <td className="border-grey-light border hover:bg-gray-100 p-3 text-red-400 hover:text-red-600 hover:font-medium cursor-pointer"
                           onClick={() => remove(item)}
