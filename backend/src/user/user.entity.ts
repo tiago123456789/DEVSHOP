@@ -34,6 +34,7 @@ export class User {
     setCreatedAtOrUpdatedAt() {
         this.updatedAt = new Date();
         this.createdAt = new Date();
+        this.lastLogin = new Date();
     }
 
     @BeforeUpdate()

@@ -21,6 +21,18 @@ type BrandDto {
   image: String
 }
 
+type AuthCredentialDto {
+  accessToken: String
+  refreshToken: String
+}
+
+type UserDto {
+  id: String
+  name: String
+  email: String
+  password: String
+}
+
 type Query {
   getCategories: [CategoryDto!]!
   getCategoryById(id: String!): CategoryDto!
@@ -28,6 +40,8 @@ type Query {
   getByIdProduct(id: String!): Product!
   getBrands: [BrandDto!]!
   getBrandById(id: String!): BrandDto!
+  getUsers: [UserDto!]!
+  authenticate: AuthCredentialDto!
 }
 
 type Mutation {
@@ -41,6 +55,8 @@ type Mutation {
   updateBrand(input: BrandInputDto!): Boolean!
   createBrand(input: BrandInputDto!): String!
   deleteBrand(id: String!): Boolean!
+  updateUser(input: UserUpdateInputDto!): Boolean!
+  createUser(input: UserInputDto!): UserDto!
 }
 
 input UpdateCategoryInputDto {
@@ -72,4 +88,15 @@ input BrandInputDto {
   id: String
   name: String
   image: String
+}
+
+input UserUpdateInputDto {
+  name: String
+  email: String
+}
+
+input UserInputDto {
+  name: String
+  email: String
+  password: String
 }

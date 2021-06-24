@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { DataInvalidException } from "src/commom/exceptions/data-invalid.exception";
 import { Repository } from "typeorm";
-import { UserDto } from "./user.dto";
+import { UserDto } from "./dto/user.dto";
 import { User } from "./user.entity";
 
 @Injectable()
