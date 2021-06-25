@@ -29,6 +29,7 @@ type AuthCredentialDto {
 type UserDto {
   id: String
   name: String
+  role: String
   email: String
   password: String
 }
@@ -41,7 +42,12 @@ type Query {
   getBrands: [BrandDto!]!
   getBrandById(id: String!): BrandDto!
   getUsers: [UserDto!]!
-  authenticate: AuthCredentialDto!
+  authenticate(input: CredentialInputDto!): AuthCredentialDto!
+}
+
+input CredentialInputDto {
+  email: String!
+  password: String!
 }
 
 type Mutation {
@@ -91,12 +97,14 @@ input BrandInputDto {
 }
 
 input UserUpdateInputDto {
+  id: String
   name: String
   email: String
 }
 
 input UserInputDto {
   name: String
+  role: String
   email: String
   password: String
 }

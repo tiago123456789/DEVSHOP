@@ -5,6 +5,9 @@ import { IsEmail, Length, Matches } from "class-validator";
 export class UserUpdateInputDto {
 
     @Field({ nullable: true })
+    id: string;
+
+    @Field({ nullable: true })
     @Length(3)
     name: string;
 

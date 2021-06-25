@@ -1,4 +1,5 @@
 import { Field, ObjectType } from "@nestjs/graphql";
+import { Length } from "class-validator";
 
 @ObjectType()
 export class AuthCredentialDto {

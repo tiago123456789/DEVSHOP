@@ -29,6 +29,12 @@ import { UserModule } from './user/user.module';
               // @ts-ignore
               statusCode: error.extensions.exception.statusCode || 500,
             };
+          case "UnauthenticatedException":
+            return {
+              message: error.extensions.exception.response || error.message,
+              // @ts-ignore
+              statusCode: error.extensions.exception.statusCode || 500,
+            };
           default:
             if (error.extensions.exception.status == 400) {
               return {

@@ -1,6 +1,7 @@
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { JwtService } from "@nestjs/jwt";
 import { AuthCredentialDto } from "./dto/auth-credential.dto";
+import { CredentialInputDto } from "./dto/credential-input.dto";
 import { UserInputDto } from "./dto/user-input.dto";
 import { UserUpdateInputDto } from "./dto/user-update-input.dto";
 import { UserDto } from "./dto/user.dto";
@@ -12,13 +13,13 @@ export class UserResolver {
 
     constructor(
         private userService: UserService,
-        private jwtService: JwtService
     ) {}
 
     @Mutation(returns => Boolean)
     async updateUser(@Args("input") input: UserUpdateInputDto): Promise<Boolean> {
         const entity: User = new User();
         entity.name = input.name;
+        entity.id = input.id
         entity.email = input.email;
         await this.userService.update(entity);
         return true;
@@ -31,6 +32,7 @@ export class UserResolver {
         entity.name = input.name;
         entity.email = input.email;
         entity.password = input.password;
+        entity.role = input.role
         return await this.userService.create(entity);
     }
 
@@ -41,16 +43,8 @@ export class UserResolver {
     }
 
     @Query(returns => AuthCredentialDto)
-    public async authenticate(): Promise<AuthCredentialDto> {
-        const authCredential = new AuthCredentialDto();
-        authCredential.accessToken = this.jwtService.sign({
-            type: "ACCESS",
-            id: 1
-        })
-        authCredential.refreshToken = this.jwtService.sign({
-            type: "REFRESH",
-            id: 1
-        })
+    public async authenticate(@Args("input") input: CredentialInputDto): Promise<AuthCredentialDto> {
+        const authCredential = await this.userService.authenticate(input);
         return authCredential;
     }
 

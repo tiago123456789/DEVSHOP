@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from './user.entity';
 import { UserResolver } from './user.resolve';
 import { UserService } from './user.service';
+import { CommomModule } from 'src/commom/commom.module';
 
 @Module({
     imports: [
@@ -18,6 +19,7 @@ import { UserService } from './user.service';
             }
           },
         }),
+      CommomModule
     ],
     providers: [UserService, UserResolver]
 })

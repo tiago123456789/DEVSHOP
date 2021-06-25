@@ -1,5 +1,7 @@
+import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 
+@Injectable()
 export class EncryptUtil {
 
     async encode(value: string): Promise<any> {
