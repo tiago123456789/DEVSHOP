@@ -43,6 +43,8 @@ type Query {
   getBrandById(id: String!): BrandDto!
   getUsers: [UserDto!]!
   authenticate(input: CredentialInputDto!): AuthCredentialDto!
+  refreshAccessAndRefreshToken(refreshToken: String!): AuthCredentialDto!
+  getMe: UserDto!
 }
 
 input CredentialInputDto {

@@ -1,5 +1,8 @@
+import { UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
 import { JwtService } from "@nestjs/jwt";
+import { UserAuthenticatedDecorator } from "src/commom/decorators/user-authenticated.decoretor";
+import { AuthorizationGuard } from "src/commom/security/authorization.security";
 import { AuthCredentialDto } from "./dto/auth-credential.dto";
 import { CredentialInputDto } from "./dto/credential-input.dto";
 import { UserInputDto } from "./dto/user-input.dto";
@@ -47,6 +50,24 @@ export class UserResolver {
         const authCredential = await this.userService.authenticate(input);
         return authCredential;
     }
+
+
+    @UseGuards(AuthorizationGuard)
+    @Query(returns => AuthCredentialDto)
+    public async refreshAccessAndRefreshToken(@UserAuthenticatedDecorator() userId: string, @Args("refreshToken") input: string): Promise<AuthCredentialDto> {
+        console.log(userId);
+        const authCredential = await this.userService.refreshAccessAndRefreshToken(input);
+        return authCredential;
+    }
+
+
+    @UseGuards(AuthorizationGuard)
+    @Query(returns => UserDto)
+    public async getMe(@UserAuthenticatedDecorator() userId: string): Promise<UserDto> {
+        return await this.userService.findById(userId);
+    }
+
+
 
     
 }
