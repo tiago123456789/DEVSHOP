@@ -8,7 +8,7 @@ import { CredentialInputDto } from "./dto/credential-input.dto";
 import { UserInputDto } from "./dto/user-input.dto";
 import { UserUpdateInputDto } from "./dto/user-update-input.dto";
 import { UserDto } from "./dto/user.dto";
-import { User } from "./user.entity";
+import { User } from "./entities/user.entity";
 import { UserService } from "./user.service";
 
 @Resolver(of => UserDto)
@@ -18,6 +18,7 @@ export class UserResolver {
         private userService: UserService,
     ) {}
 
+    @UseGuards(AuthorizationGuard)
     @Mutation(returns => Boolean)
     async updateUser(@Args("input") input: UserUpdateInputDto): Promise<Boolean> {
         const entity: User = new User();
@@ -28,6 +29,12 @@ export class UserResolver {
         return true;
     }
 
+    @UseGuards(AuthorizationGuard)
+    @Mutation(returns => Boolean)
+    async inactiveSessionByUserId(@Args("input") input: string): Promise<Boolean> {
+        await this.userService.inactiveSessionBySessionId(input);
+        return true;
+    }
 
     @Mutation(returns => UserDto)
     async createUser(@Args("input") input: UserInputDto): Promise<UserDto> {
@@ -39,6 +46,7 @@ export class UserResolver {
         return await this.userService.create(entity);
     }
 
+    @UseGuards(AuthorizationGuard)
     @Query(returns => [UserDto])
     public async getUsers(): Promise<UserDto[]> {
         const users = await this.userService.getAll();
@@ -52,10 +60,8 @@ export class UserResolver {
     }
 
 
-    @UseGuards(AuthorizationGuard)
     @Query(returns => AuthCredentialDto)
-    public async refreshAccessAndRefreshToken(@UserAuthenticatedDecorator() userId: string, @Args("refreshToken") input: string): Promise<AuthCredentialDto> {
-        console.log(userId);
+    public async refreshAccessAndRefreshToken(@Args("input") input: string): Promise<AuthCredentialDto> {
         const authCredential = await this.userService.refreshAccessAndRefreshToken(input);
         return authCredential;
     }
@@ -67,7 +73,4 @@ export class UserResolver {
         return await this.userService.findById(userId);
     }
 
-
-
-    
 }

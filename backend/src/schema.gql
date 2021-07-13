@@ -43,7 +43,7 @@ type Query {
   getBrandById(id: String!): BrandDto!
   getUsers: [UserDto!]!
   authenticate(input: CredentialInputDto!): AuthCredentialDto!
-  refreshAccessAndRefreshToken(refreshToken: String!): AuthCredentialDto!
+  refreshAccessAndRefreshToken(input: String!): AuthCredentialDto!
   getMe: UserDto!
 }
 
@@ -64,6 +64,7 @@ type Mutation {
   createBrand(input: BrandInputDto!): String!
   deleteBrand(id: String!): Boolean!
   updateUser(input: UserUpdateInputDto!): Boolean!
+  inactiveSessionByUserId(input: String!): Boolean!
   createUser(input: UserInputDto!): UserDto!
 }
 

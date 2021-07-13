@@ -8,13 +8,17 @@ import { Repository } from "typeorm";
 import { AuthCredentialDto } from "./dto/auth-credential.dto";
 import { CredentialInputDto } from "./dto/credential-input.dto";
 import { UserDto } from "./dto/user.dto";
-import { User } from "./user.entity";
+import { User } from "./entities/user.entity";
+import { Session } from "./entities/session.entity";
+import { Console } from "console";
+
 
 @Injectable()
 export class UserService {
 
     constructor(
         @InjectRepository(User) private userRepository: Repository<User>,
+        @InjectRepository(Session) private sessionRepository: Repository<Session>,
         private encryptUtil: EncryptUtil,
         private jwtService: JwtService
     ) {
@@ -31,6 +35,16 @@ export class UserService {
     }
 
     async refreshAccessAndRefreshToken(refreshToken: string): Promise<AuthCredentialDto> {
+        const isRefreshTokenValid = await this.sessionRepository
+        .createQueryBuilder("Session")
+        .where("Session.refreshToken = :value and Session.isActive = true")
+        .setParameter("value", refreshToken)
+        .getOne();
+
+        if (!isRefreshTokenValid) {
+            throw new UnauthenticatedException("It's not valid token")
+        }
+
         const tokenDecoded: any = this.jwtService.decode(refreshToken);
         if (!tokenDecoded || tokenDecoded.type != "REFRESH") {
             throw new UnauthenticatedException("It's not valid token")
@@ -63,7 +77,7 @@ export class UserService {
         return this.generateAccessAndRefreshToken(registerWithEmail);
     }
 
-    private generateAccessAndRefreshToken(user: User) {
+    private async generateAccessAndRefreshToken(user: User) {
         const authCredential = new AuthCredentialDto();
         authCredential.accessToken = this.jwtService.sign({
             type: "ACCESS",
@@ -77,6 +91,14 @@ export class UserService {
             role: user.role,
             id: user.id
         }, { expiresIn: process.env.JWT_REFRESH_TOKEN_EXP })
+
+        await this.sessionRepository.save({
+            userAgent: "",
+            user,
+            isActive: true,
+            refreshToken: authCredential.refreshToken,
+            updatedAt: new Date()
+        });
         return authCredential;
     }
 
@@ -110,5 +132,9 @@ export class UserService {
             // @ts-ignore
             return new UserDto(item.id, item.name, item.email, item.role);
         })
+    }
+
+    async inactiveSessionBySessionId(sessionId: string) {
+        return this.sessionRepository.update({ id: sessionId }, { isActive: false })
     }
 }

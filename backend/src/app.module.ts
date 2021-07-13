@@ -41,9 +41,16 @@ import { UserModule } from './user/user.module';
                 message: error.extensions.exception.response.message,
                 // @ts-ignore
                 statusCode: 400
+               };
+            } else if (error.extensions.exception.status == 403) {
+              return {
+                message: "Is necessary is authenticated to access resource",
+                // @ts-ignore
+                statusCode: 403
               };
             }
-            console.log(error.extensions.exception);
+
+           
             return {
               message: "Internal server error",
               // @ts-ignore
