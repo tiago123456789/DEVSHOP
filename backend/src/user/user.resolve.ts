@@ -1,6 +1,5 @@
 import { UseGuards } from "@nestjs/common";
 import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
-import { JwtService } from "@nestjs/jwt";
 import { UserAuthenticatedDecorator } from "src/commom/decorators/user-authenticated.decoretor";
 import { AuthorizationGuard } from "src/commom/security/authorization.security";
 import { AuthCredentialDto } from "./dto/auth-credential.dto";
@@ -10,6 +9,7 @@ import { UserUpdateInputDto } from "./dto/user-update-input.dto";
 import { UserDto } from "./dto/user.dto";
 import { User } from "./entities/user.entity";
 import { UserService } from "./user.service";
+import { Roles } from "./../commom/decorators/role.decoretor"
 
 @Resolver(of => UserDto)
 export class UserResolver {
@@ -28,8 +28,9 @@ export class UserResolver {
         await this.userService.update(entity);
         return true;
     }
-
+   
     @UseGuards(AuthorizationGuard)
+    @Roles("ADMIN")
     @Mutation(returns => Boolean)
     async inactiveSessionByUserId(@Args("input") input: string): Promise<Boolean> {
         await this.userService.inactiveSessionBySessionId(input);
@@ -47,6 +48,7 @@ export class UserResolver {
     }
 
     @UseGuards(AuthorizationGuard)
+    @Roles("ADMIN")
     @Query(returns => [UserDto])
     public async getUsers(): Promise<UserDto[]> {
         const users = await this.userService.getAll();
@@ -59,7 +61,8 @@ export class UserResolver {
         return authCredential;
     }
 
-
+    @UseGuards(AuthorizationGuard)
+    @Roles("ADMIN", "CLIENT", "EMPLOYEE")
     @Query(returns => AuthCredentialDto)
     public async refreshAccessAndRefreshToken(@Args("input") input: string): Promise<AuthCredentialDto> {
         const authCredential = await this.userService.refreshAccessAndRefreshToken(input);
@@ -68,6 +71,7 @@ export class UserResolver {
 
 
     @UseGuards(AuthorizationGuard)
+    @Roles("ADMIN", "CLIENT", "EMPLOYEE")
     @Query(returns => UserDto)
     public async getMe(@UserAuthenticatedDecorator() userId: string): Promise<UserDto> {
         return await this.userService.findById(userId);
