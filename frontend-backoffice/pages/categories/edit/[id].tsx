@@ -6,8 +6,11 @@ import { useRouter } from "next/router";
 import CategoryService from "../../../services/CategoryService";
 import CategoryValidation from "../../../validations/CategoryValidation";
 import ErrorValidation from "../../../components/ErrorValidation";
+import AuthService from "../../../services/AuthService";
 
-export default ({ id }) => {
+const authService = new AuthService()
+
+const EditCategory = ({ id }) => {
     const [category, setCategory] = useState({});
     const router = useRouter();
     const formik = useFormik({
@@ -84,10 +87,18 @@ export default ({ id }) => {
     );
 }
 
-export function getServerSideProps(context) {
+export async function getServerSideProps(context) {
+    if (!authService.isAuthenticated(context)) {
+      context.res.writeHead(302, { Location: '/login' }).end()
+      return {
+        props: {}
+      };
+    }
     return {
         props: {
             id: context.params.id
         }
     }
-}
+  }
+  
+  export default EditCategory

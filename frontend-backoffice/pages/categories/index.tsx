@@ -5,8 +5,11 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import App from "../../constants/App";
 import Button from "../../components/Button";
+import AuthService from "../../services/AuthService";
 
-export default () => {
+const authService = new AuthService();
+
+const CategoryList = () => {
   const router = useRouter();
   const [categories, setCategories] = useState([]);
   useEffect(() => {
@@ -70,3 +73,18 @@ export default () => {
     </>
   );
 }
+
+
+export async function getServerSideProps(context) {
+  if (!authService.isAuthenticated(context)) {
+    context.res.writeHead(302, { Location: '/login' }).end()
+    return {
+      props: {}
+    };
+  }
+  return {
+    props: {}
+  }
+}
+
+export default CategoryList

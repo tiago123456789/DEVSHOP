@@ -7,8 +7,11 @@ import { useFormik } from "formik";
 import slugify from "slugify";
 import { useRouter } from "next/router";
 import CategoryValidation from "../../validations/CategoryValidation";
+import AuthService from "../../services/AuthService";
 
-export default () => {
+const authService = new AuthService()
+
+const NewCategory = () => {
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -73,3 +76,19 @@ export default () => {
     </>
   );
 }
+
+
+
+export async function getServerSideProps(context) {
+  if (!authService.isAuthenticated(context)) {
+    context.res.writeHead(302, { Location: '/login' }).end()
+    return {
+      props: {}
+    };
+  }
+  return {
+    props: {}
+  }
+}
+
+export default NewCategory

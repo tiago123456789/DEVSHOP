@@ -7,10 +7,12 @@ import BrandService from "../../../services/BrandService";
 import BrandValidation from "../../../validations/BrandValidation";
 import App from "../../../constants/App";
 import { FileUtil } from "../../../utils/file-util";
+import AuthService from "../../../services/AuthService";
 
 const brandService = new BrandService();
+const authService = new AuthService();
 
-export default ({ id }) => {
+const EditBrand =  ({ id }) => {
     const [brands, setBrands] = useState({});
     const router = useRouter();
     const formik = useFormik({
@@ -89,10 +91,19 @@ export default ({ id }) => {
     );
 }
 
-export function getServerSideProps(context) {
+export async function getServerSideProps(context) {
+    if (!authService.isAuthenticated(context)) {
+      context.res.writeHead(302, { Location: '/login' }).end()
+      return  {
+        props: {}
+      };
+    }
     return {
         props: {
             id: context.params.id
         }
     }
-}
+  }
+  
+  
+  export default EditBrand

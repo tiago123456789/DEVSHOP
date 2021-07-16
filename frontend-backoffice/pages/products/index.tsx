@@ -4,10 +4,12 @@ import ProductService from "../../services/ProductService";
 import { useRouter } from "next/router";
 import Button from "../../components/Button";
 import App from "../../constants/App";
+import AuthService from "../../services/AuthService";
 
 const productService = new ProductService();
+const authService = new AuthService();
 
-export default () => {
+const ProductList = () => {
   const router = useRouter();
   const [products, setProducts] = useState([]);
 
@@ -73,3 +75,19 @@ export default () => {
     </>
   );
 }
+
+
+export async function getServerSideProps(context) {
+  if (!authService.isAuthenticated(context)) {
+    context.res.writeHead(302, { Location: '/login' }).end()
+    return {
+      props: {}
+    };
+  }
+  return {
+      props: {
+      }
+  }
+}
+
+export default ProductList

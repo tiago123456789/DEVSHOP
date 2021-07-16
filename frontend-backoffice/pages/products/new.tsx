@@ -8,10 +8,12 @@ import ProductService from "../../services/ProductService";
 import App from "../../constants/App";
 import ProductValidation from "../../validations/ProductValidation";
 import ErrorValidation from "../../components/ErrorValidation";
+import AuthService from "../../services/AuthService";
 
 const productService = new ProductService();
+const authService = new AuthService();
 
-export default () => {
+const NewProduct = () => {
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -88,3 +90,19 @@ export default () => {
     </>
   );
 }
+
+
+export async function getServerSideProps(context) {
+  if (!authService.isAuthenticated(context)) {
+    context.res.writeHead(302, { Location: '/login' }).end()
+    return {
+      props: {}
+    };
+  }
+  return {
+      props: {
+      }
+  }
+}
+
+export default NewProduct

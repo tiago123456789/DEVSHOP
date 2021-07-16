@@ -6,10 +6,12 @@ import Link from "next/link";
 import App from "../../constants/App";
 import Button from "../../components/Button";
 import BrandService from "../../services/BrandService";
+import AuthService from "../../services/AuthService";
 
+const authService = new AuthService()
 const brandService = new BrandService();
 
-export default () => {
+const BrandList = () => {
   const router = useRouter();
   const [brands, setBrands] = useState([]);
   useEffect(() => {
@@ -75,3 +77,17 @@ export default () => {
     </>
   );
 }
+
+export async function getServerSideProps(context) {
+  if (!authService.isAuthenticated(context)) {
+    context.res.writeHead(302, { Location: '/login' }).end()
+    return {
+      props: {}
+    };
+  }
+  return {
+    props: {}
+  }
+}
+
+export default BrandList

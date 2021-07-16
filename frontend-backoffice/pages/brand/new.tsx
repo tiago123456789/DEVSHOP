@@ -9,10 +9,12 @@ import { useRouter } from "next/router";
 import BrandValidation from "../../validations/BrandValidation";
 import BrandService from "../../services/BrandService";
 import { FileUtil } from "../../utils/file-util";
+import AuthService from "../../services/AuthService";
 
+const authService = new AuthService()
 const brandService = new BrandService();
 
-export default () => {
+const NewBrand = () => {
   const router = useRouter();
   const formik = useFormik({
     initialValues: {
@@ -82,3 +84,19 @@ export default () => {
     </>
   );
 }
+
+
+export async function getServerSideProps(context) {
+  if (!authService.isAuthenticated(context)) {
+    context.res.writeHead(302, { Location: '/login' }).end()
+    return  {
+      props: {}
+    };
+  }
+  return {
+    props: {}
+  }
+}
+
+
+export default NewBrand
