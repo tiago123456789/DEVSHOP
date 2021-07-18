@@ -5,6 +5,7 @@ export default ({
         CATEGORY: "/categories",
         NEW_CATEGORY: "/categories/new",
         NEW_BRAND: "/brand/new",
-        BRAND: "/brand"
+        BRAND: "/brand",
+        LOGOUT: "/logout"
     }
 })

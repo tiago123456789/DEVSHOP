@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import Link from "next/link"
+import App from "../../constants/App";
 
 export default () => {
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -22,7 +24,9 @@ export default () => {
                     <div x-show="dropdownOpen" className="absolute right-0 mt-2 w-48 bg-white rounded-md overflow-hidden shadow-xl z-10" style={{ display: (dropdownOpen ? 'block' : "none") }}>
                         <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">Profile</a>
                         {/* <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">Products</a> */}
-                        <a href="/login" className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">Logout</a>
+                        <Link href={App.ROUTES.LOGOUT}>
+                            <a className="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-600 hover:text-white">Logout</a>
+                        </Link>
                     </div>
                 </div>
             </div>

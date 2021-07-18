@@ -20,6 +20,10 @@ export class AuthorizationGuard implements CanActivate {
 
         const accessToken = req.headers.authorization.replace("Bearer ", "");
         const accessTokenDecoded: any = this.jwtService.decode(accessToken);
+        if (!accessTokenDecoded) {
+            return false;
+        }
+
         if (accessTokenDecoded.type != "ACCESS")  {
             return false
         }

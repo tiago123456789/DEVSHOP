@@ -1,5 +1,7 @@
-import axios from "axios";
-import { parseCookies, setCookie } from "nookies";
+import axios from "./../utils/HttpClient";
+import { parseCookies } from "nookies";
+import Cookies from "js-cookie"
+import environment from "../utils/Environment";
 
 export interface AuthCredential {
 
@@ -18,6 +20,45 @@ export interface AuthToken {
 
 export default class AuthService {
 
+  logout() {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("accessToken")
+      localStorage.removeItem("refreshToken")
+      Cookies.remove("accessToken", {
+        expires: 1, path: "/"
+      });
+      Cookies.remove("refreshToken", {
+        expires: 1, path: "/"
+      });
+    }
+  }
+
+  async refreshAccessAndRefreshToken() {
+    const { refreshToken } = this.getAuthToken();
+    const query = `
+      query {
+        refreshAccessAndRefreshToken(input: "${refreshToken}") {
+          accessToken, refreshToken
+        }
+      }
+    `;
+
+    const response = await axios.post(
+      process.env.NEXT_PUBLIC_URL_BASE,
+      { query: query }
+    );
+
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+    console.log(response)
+    if (response.data.errors) {
+      return null;
+    }
+
+    const authCredential: AuthToken = response.data?.data.refreshAccessAndRefreshToken;
+    return this.store(authCredential);
+  }
+
+ 
 
   async authenticate(authCredential: AuthCredential) {
     const query = `
@@ -42,24 +83,29 @@ export default class AuthService {
 
   store(authToken: AuthToken) {
     // @ts-ignore
-    setCookie(null, 'accessToken', authToken.accessToken, {
-      maxAge: 30 * 24 * 60 * 60,
-      path: '/',
-    })
-
+    localStorage.setItem("accessToken", authToken.accessToken)
     // @ts-ignore
-    setCookie(null, 'refreshToken', authToken.refreshToken, {
-      maxAge: 30 * 24 * 60 * 60,
-      path: '/',
-    })
+    localStorage.setItem("refreshToken", authToken.refreshToken)
+
+    Cookies.set('accessToken', authToken.accessToken, { path: '/' });
+    Cookies.set('refreshToken', authToken.refreshToken, { path: '/' });
   }
 
-  getAuthToken(contextNext: { [key: string]: any }): AuthToken {
+  getAuthToken(contextNext?: { [key: string]: any }): AuthToken {
+    if (environment.isFrontend()) {
+      const accessToken = localStorage.getItem("accessToken")
+      const refreshToken = localStorage.getItem("refreshToken")
+      return {
+        accessToken,
+        refreshToken
+      }
+    }
+
     // @ts-ignore
     return parseCookies(contextNext);
   }
 
-  isAuthenticated(contextNext) {
+  private isAuthenticatedBackend(contextNext) {
     const { accessToken } = this.getAuthToken(contextNext);
     if (!accessToken) {
       return false;
@@ -75,4 +121,27 @@ export default class AuthService {
     return true;
   }
 
+  private isAuthenticatedFrontend() {
+    const { accessToken } = this.getAuthToken(null);
+    if (!accessToken) {
+      return false;
+    }
+
+    let payload = accessToken.split(".")[1]
+    payload = JSON.parse(atob(payload))
+    const exp = payload["exp"];
+    if (Date.now() >= exp * 1000) {
+      return false;
+    }
+
+    return true;
+  }
+
+  isAuthenticated(contextNext) {
+    if (environment.isFrontend()) {
+      return this.isAuthenticatedFrontend()
+    }
+
+    return this.isAuthenticatedBackend(contextNext);
+  }
 }

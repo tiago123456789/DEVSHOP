@@ -1,6 +1,6 @@
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Alert from "../components/Alert";
 import App from "../constants/App";
 import AuthService from "../services/AuthService";
@@ -107,16 +107,6 @@ const Login = () => {
       </div>
     </div>
   );
-}
-
-export async function getServerSideProps(context) {
-  if (authService.isAuthenticated(context)) {
-    context.res.writeHead(302, { Location: '/brand' }).end()
-    return;
-  }
-  return {
-    props: {}
-  }
 }
 
 export default Login;

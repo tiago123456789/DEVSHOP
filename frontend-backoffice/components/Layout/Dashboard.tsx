@@ -1,8 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
 export default (props) => {
+
+    // useEffect(() => {
+    //     setInterval(async () => {
+    //         console.log("executing refressh access and refresh token")
+    //         console.log(await props.authService.refreshAccessAndRefreshToken())
+    //     }, (13 * 1000))
+
+    // }, [])
+
     return (
         <div>
             <div x-data="{ sidebarOpen: false }" className="flex h-screen bg-gray-200">
@@ -30,7 +39,7 @@ export default (props) => {
                             </div>
                             <div className="flex flex-col mt-8">
                                 <div className="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-                                        {props.children}
+                                    {props.children}
                                 </div>
                             </div>
                         </div>

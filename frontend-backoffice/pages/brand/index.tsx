@@ -32,7 +32,7 @@ const BrandList = () => {
 
   return (
     <>
-      <Dashboard title="Brands">
+      <Dashboard title="Brands" authService={authService}>
         <>
           <div className="container">
 
@@ -81,7 +81,7 @@ const BrandList = () => {
 export async function getServerSideProps(context) {
   if (!authService.isAuthenticated(context)) {
     context.res.writeHead(302, { Location: '/login' }).end()
-    return {
+    return  {
       props: {}
     };
   }
